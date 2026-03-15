@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>خمّن ما عندي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#f5f4f0;color:#1a1a18;min-height:100vh;display:flex;justify-content:center;padding:1.5rem 1rem}
+.wrap{width:100%;max-width:480px}
+.scr{display:flex;flex-direction:column;gap:.875rem}
+.hdr{text-align:center;padding:1.125rem;background:#fff;border-radius:16px;border:.5px solid #e0dfd8}
+.hdr h1{font-size:21px;font-weight:700}
+.hdr p{font-size:13px;color:#6b6b66;margin-top:3px}
+.card{background:#fff;border:.5px solid #e0dfd8;border-radius:16px;padding:1.125rem}
+.btn{padding:.6rem 1rem;border:.5px solid #c8c7c0;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:500;cursor:pointer;background:#fff;color:#1a1a18;transition:background .15s;width:100%}
+.btn:hover{background:#f5f4f0}
+.btn:disabled{opacity:.45;cursor:default}
+.bp{background:#378ADD;color:#fff;border-color:#185FA5}.bp:hover:not(:disabled){background:#185FA5}
+.bg{background:#1D9E75;color:#fff;border-color:#0F6E56}.bg:hover:not(:disabled){background:#0F6E56}
+.br{background:#E24B4A;color:#fff;border-color:#A32D2D}.br:hover:not(:disabled){background:#A32D2D}
+.ifield{width:100%;padding:.6rem .9rem;border:.5px solid #c8c7c0;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:15px;background:#fff;color:#1a1a18;text-align:right;outline:none}
+.ifield:focus{border-color:#378ADD}
+.irow{display:flex;gap:.5rem}
+.irow .ifield{flex:1}
+.irow .btn{width:auto;white-space:nowrap}
+
+/* scoreboard */
+.sb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;background:#fff;border:.5px solid #e0dfd8;border-radius:16px;padding:.875rem 1.125rem}
+.sb-p{text-align:center}
+.sb-name{font-size:12px;color:#6b6b66;font-weight:500;margin-bottom:2px}
+.sb-score{font-size:36px;font-weight:700;line-height:1}
+.sb-p.me .sb-score{color:#185FA5}
+.sb-p.op .sb-score{color:#0F6E56}
+.sb-mid{text-align:center;font-size:13px;color:#bbb}
+.sb-label{font-size:11px;color:#bbb;margin-top:3px}
+
+/* room code */
+.code-box{background:#1a1a18;color:#fff;border-radius:14px;padding:1.5rem;text-align:center}
+.code-num{font-size:48px;font-weight:700;letter-spacing:8px;margin:.5rem 0}
+.code-hint{font-size:13px;color:#aaa}
+
+/* item box */
+.itembx{background:linear-gradient(135deg,#E6F1FB,#E1F5EE);border:.5px solid #B5D4F4;border-radius:14px;padding:1.375rem;text-align:center}
+.iem{font-size:52px;line-height:1.2}
+.inm{font-size:18px;font-weight:700;margin-top:5px}
+.iht{font-size:13px;color:#6b6b66;margin-top:2px}
+
+/* chat */
+.prg{background:#e8e7e0;border-radius:99px;height:6px;overflow:hidden}
+.prf{height:100%;border-radius:99px;background:#378ADD;transition:width .35s}
+.qbox{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;padding:.25rem 0;scrollbar-width:thin}
+.mq-me{background:#E6F1FB;color:#0C447C;padding:.6rem .9rem;border-radius:10px;border-bottom-right-radius:3px;font-size:14px;align-self:flex-end;max-width:82%;line-height:1.5}
+.mq-op{background:#E1F5EE;color:#085041;padding:.6rem .9rem;border-radius:10px;border-bottom-left-radius:3px;font-size:14px;align-self:flex-start;max-width:82%;line-height:1.5}
+.ma{background:#f5f4f0;padding:.6rem .9rem;border-radius:10px;font-size:14px;align-self:center;max-width:88%;line-height:1.5;text-align:center}
+.ms{background:#FAEEDA;color:#633806;padding:3px 14px;border-radius:99px;font-size:12px;align-self:center}
+.tind{display:flex;align-items:center;gap:.5rem;padding:.65rem .9rem;border-radius:10px;border:.5px solid #c8c7c0;font-size:14px;font-weight:500}
+.tip1{background:#E6F1FB;border-color:#B5D4F4;color:#0C447C}
+.tip2{background:#E1F5EE;border-color:#9FE1CB;color:#085041}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#378ADD}
+.dot2{background:#1D9E75}
+.abtns{display:flex;flex-wrap:wrap;gap:.4rem}
+.abtn{padding:.35rem .85rem;border:.5px solid #c8c7c0;border-radius:99px;font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;background:#f5f4f0;color:#1a1a18}
+.abtn:hover{background:#fff}
+
+/* choices */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.cbtn{padding:.875rem .75rem;border:1.5px solid #e0dfd8;border-radius:14px;cursor:pointer;text-align:center;background:#fff;transition:all .2s;font-family:'Tajawal',sans-serif}
+.cbtn:hover:not(:disabled){border-color:#378ADD;background:#E6F1FB}
+.cbtn:disabled{opacity:.6;cursor:default}
+.cbtn.picked{border-color:#378ADD;background:#E6F1FB}
+.cem{font-size:30px;display:block;line-height:1.3}
+.cnm{font-size:13px;font-weight:500}
+
+/* waiting */
+.waiting{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:1rem;font-size:14px;color:#6b6b66}
+.spin{width:16px;height:16px;border:2px solid #ddd;border-top-color:#378ADD;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.tag{display:inline-block;padding:2px 10px;border-radius:8px;font-size:12px;font-weight:500}
+.tag-me{background:#E6F1FB;color:#0C447C}
+.tag-op{background:#E1F5EE;color:#085041}
+.tag-w{background:#FAEEDA;color:#633806}
+
+.pt-badge{display:inline-block;padding:3px 12px;border-radius:99px;font-size:13px;font-weight:500;margin-top:.5rem}
+.pt-ok{background:#E1F5EE;color:#085041}
+.pt-no{background:#f5f4f0;color:#888}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.rcrd{text-align:center;padding:1rem;border-radius:14px;border:.5px solid #e0dfd8;background:#f5f4f0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+/* ══════════════ CONFIG ══════════════ */
+const SB='https://irycvanmqiggnkppbbrx.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyeWN2YW5tcWlnZ25rcHBiYnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2OTk0MTgsImV4cCI6MjA4NzI3NTQxOH0.S3lU3rCb1J9o-b4WjfGoavZW0-ki_wQD-jiMdC7cXGE';
+const H={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY};
+
+/* ══════════════ ITEMS ══════════════ */
+const IT=[
+  {n:"قهوة",e:"☕",s:"سائل"},{n:"هاتف ذكي",e:"📱",s:"صلب"},{n:"كتاب",e:"📚",s:"صلب"},
+  {n:"ماء",e:"💧",s:"سائل"},{n:"مفتاح",e:"🔑",s:"صلب"},{n:"هواء",e:"💨",s:"غاز"},
+  {n:"سيارة",e:"🚗",s:"صلب"},{n:"تفاحة",e:"🍎",s:"صلب"},{n:"حاسوب",e:"💻",s:"صلب"},
+  {n:"بخار ماء",e:"🌫️",s:"غاز"},{n:"قلم",e:"🖊️",s:"صلب"},{n:"عصير",e:"🍹",s:"سائل"},
+  {n:"نظارة",e:"👓",s:"صلب"},{n:"ثلج",e:"🧊",s:"صلب"},{n:"زجاجة",e:"🫙",s:"صلب"},
+  {n:"كرسي",e:"🪑",s:"صلب"},{n:"ساعة",e:"⌚",s:"صلب"},{n:"خبز",e:"🍞",s:"صلب"},
+  {n:"دراجة",e:"🚲",s:"صلب"},{n:"شمعة",e:"🕯️",s:"صلب"},{n:"حليب",e:"🥛",s:"سائل"},
+  {n:"كرة قدم",e:"⚽",s:"صلب"},{n:"مكنسة",e:"🧹",s:"صلب"},{n:"أكسجين",e:"🫧",s:"غاز"},
+  {n:"سكين",e:"🔪",s:"صلب"},{n:"وسادة",e:"🛏️",s:"صلب"},{n:"دفتر",e:"📒",s:"صلب"},
+  {n:"بطارية",e:"🔋",s:"صلب"},{n:"مظلة",e:"☂️",s:"صلب"},{n:"حقيبة",e:"👜",s:"صلب"},
+  {n:"صابون",e:"🧼",s:"صلب"},{n:"مصباح",e:"💡",s:"صلب"},{n:"سماعة",e:"🎧",s:"صلب"},
+  {n:"شاي",e:"🍵",s:"سائل"},{n:"مرآة",e:"🪞",s:"صلب"},{n:"غاز الطبخ",e:"🔥",s:"غاز"},
+  {n:"شاحن",e:"🔌",s:"صلب"},{n:"تلفاز",e:"📺",s:"صلب"},{n:"مقص",e:"✂️",s:"صلب"},
+  {n:"عطر",e:"🌺",s:"سائل"},{n:"مروحة",e:"🌀",s:"صلب"},{n:"موز",e:"🍌",s:"صلب"},
+  {n:"مطرقة",e:"🔨",s:"صلب"},{n:"ميزان",e:"⚖️",s:"صلب"},{n:"معجون",e:"🪥",s:"صلب"},
+  {n:"طاولة",e:"🪵",s:"صلب"},{n:"لعبة شطرنج",e:"♟️",s:"صلب"},
+];
+function pick(ex){let p,t=0;do{p=IT[Math.floor(Math.random()*IT.length)];t++;}while(ex&&p.n===ex.n&&t<80);return p;}
+function shuf(a){return[...a].sort(()=>Math.random()-.5);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function rndCode(){return String(Math.floor(1000+Math.random()*9000));}
+
+/* ══════════════ STATE ══════════════ */
+/* ph: lobby | waiting | ready | items | game | guessing | roundEnd */
+let G={
+  ph:'lobby',
+  myName:'', opName:'',
+  myRole:0,          /* 1=creator, 2=joiner */
+  roomCode:'',
+  myItem:null, opItem:null,
+  myScore:0, opScore:0,
+  round:0,
+  msgs:[],
+  qCount:0, MAX:10,
+  asker:1,           /* whose turn to ask: 1 or 2 */
+  pendingQ:null,     /* question waiting for answer */
+  myChoices:[],      /* 5 choices for my guess */
+  myGuess:null,
+  opGuess:null,
+  opGuessed:false,
+  channel:null,
+  pollTimer:null,
+  saving:false,
+};
+
+/* ══════════════ DB helpers ══════════════ */
+async function dbGet(table,filter){
+  try{const r=await fetch(`${SB}/rest/v1/${table}?${filter}`,{headers:H});const d=await r.json();return Array.isArray(d)&&d.length?d[0]:null;}catch{return null;}
+}
+async function dbUpsert(table,data){
+  try{await fetch(`${SB}/rest/v1/${table}`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(data)});}catch{}
+}
+async function dbPatch(table,filter,data){
+  try{await fetch(`${SB}/rest/v1/${table}?${filter}`,{method:'PATCH',headers:H,body:JSON.stringify(data)});}catch{}
+}
+
+/* ══════════════ ROOM helpers ══════════════ */
+async function createRoom(){
+  const code=rndCode();
+  const item=pick(null);
+  G.myItem=item;
+  G.roomCode=code;
+  G.myRole=1;
+  await dbUpsert('game_rooms',{
+    code,
+    p1_name:G.myName, p1_item:JSON.stringify(item),
+    p2_name:'', p2_item:'',
+    status:'waiting',
+    score1:0, score2:0, round:0,
+    msgs:JSON.stringify([]),
+    q_count:0, asker:1, pending_q:'',
+    p1_guess:'', p2_guess:'',
+    updated_at:new Date().toISOString()
+  });
+  return code;
+}
+
+async function joinRoom(code){
+  const row=await dbGet('game_rooms','code=eq.'+code+'&select=*');
+  if(!row||row.status!=='waiting') return null;
+  const item=pick(JSON.parse(row.p1_item||'{}'));
+  G.myItem=item;
+  G.opName=row.p1_name;
+  G.myRole=2;
+  G.roomCode=code;
+  await dbPatch('game_rooms','code=eq.'+code,{
+    p2_name:G.myName, p2_item:JSON.stringify(item),
+    status:'ready',
+    updated_at:new Date().toISOString()
+  });
+  return row;
+}
+
+async function fetchRoom(){
+  return dbGet('game_rooms','code=eq.'+G.roomCode+'&select=*');
+}
+
+function applyRoom(row){
+  if(!row) return;
+  if(G.myRole===1){
+    G.opName=row.p2_name||G.opName;
+    G.opItem=row.p2_item?JSON.parse(row.p2_item):G.opItem;
+    G.myScore=row.score1||0; G.opScore=row.score2||0;
+  } else {
+    G.opName=row.p1_name||G.opName;
+    G.opItem=row.p1_item?JSON.parse(row.p1_item):G.opItem;
+    G.myScore=row.score2||0; G.opScore=row.score1||0;
+  }
+  G.round=row.round||0;
+  G.qCount=row.q_count||0;
+  G.asker=row.asker||1;
+  G.msgs=row.msgs?JSON.parse(row.msgs):[];
+  G.pendingQ=row.pending_q||null;
+  const pg1=row.p1_guess?JSON.parse(row.p1_guess):null;
+  const pg2=row.p2_guess?JSON.parse(row.p2_guess):null;
+  if(G.myRole===1){G.myGuess=pg1;G.opGuess=pg2;}
+  else{G.myGuess=pg2;G.opGuess=pg1;}
+  G.opGuessed=G.myRole===1?(!!pg2):(!!pg1);
+}
+
+/* ══════════════ POLLING ══════════════ */
+function startPoll(){
+  stopPoll();
+  G.pollTimer=setInterval(async()=>{
+    const row=await fetchRoom();
+    if(!row) return;
+    const prevPh=G.ph;
+    const prevMsgLen=G.msgs.length;
+    const prevQ=G.qCount;
+    const prevAsker=G.asker;
+    const prevStatus=row.status;
+    applyRoom(row);
+
+    /* phase transitions */
+    if(row.status==='ready'&&(G.ph==='waiting'||G.ph==='lobby')){
+      G.ph='items'; render(); return;
+    }
+    if(row.status==='game'&&G.ph==='items'){
+      G.ph='game'; render(); return;
+    }
+    if(row.status==='guessing'&&G.ph==='game'){
+      buildMyChoices();G.ph='guessing';render();return;
+    }
+    if(row.status==='roundEnd'&&G.ph==='guessing'){
+      G.ph='roundEnd';render();return;
+    }
+    if(row.status==='game'&&G.ph==='roundEnd'){
+      /* new round started */
+      G.myItem=G.myRole===1?JSON.parse(row.p1_item):JSON.parse(row.p2_item);
+      G.myGuess=null;G.opGuess=null;G.opGuessed=false;
+      G.ph='items';render();return;
+    }
+    /* re-render if msgs or question changed */
+    if(G.msgs.length!==prevMsgLen||G.qCount!==prevQ||G.asker!==prevAsker||G.opGuessed!==prevPh){
+      render();
+      const b=document.getElementById('mb');
+      if(b)b.scrollTop=b.scrollHeight;
+    }
+  },1500);
+}
+function stopPoll(){if(G.pollTimer){clearInterval(G.pollTimer);G.pollTimer=null;}}
+
+function buildMyChoices(){
+  const cor=G.opItem;
+  if(!cor){return;}
+  const opts=[cor];
+  while(opts.length<5){const r=pick(null);if(!opts.find(o=>o.n===r.n))opts.push(r);}
+  G.myChoices=shuf(opts);
+}
+
+/* ══════════════ RENDER ══════════════ */
+function render(){
+  document.getElementById('app').innerHTML=html();
+  bind();
+}
+
+function sbH(roundLabel){
+  return`<div class="sb">
+    <div class="sb-p me"><div class="sb-name">${esc(G.myName)} <span class="tag tag-me">أنا</span></div><div class="sb-score">${G.myScore}</div></div>
+    <div class="sb-mid"><div>VS</div><div class="sb-label">${esc(roundLabel||('جولة '+(G.round+1)))}</div></div>
+    <div class="sb-p op"><div class="sb-name">${esc(G.opName||'...')}</div><div class="sb-score">${G.opScore}</div></div>
+  </div>`;}
+
+function html(){
+  const p=G.ph;
+  if(p==='lobby') return lobbyH();
+  if(p==='waiting') return waitingH();
+  if(p==='items') return itemsH();
+  if(p==='game') return gameH();
+  if(p==='guessing') return guessingH();
+  if(p==='roundEnd') return roundEndH();
+  return lobbyH();
+}
+
+function lobbyH(){
+  return`<div class="scr">
+    <div class="hdr"><h1>🎯 خمّن ما عندي</h1><p>لعبة تحدي بين جهازين مختلفين</p></div>
+    <div class="card">
+      <p style="font-size:13px;color:#6b6b66;margin-bottom:.75rem">أدخل اسمك أولاً</p>
+      <input id="nameInp" class="ifield" placeholder="اسمك" value="${esc(G.myName)}"/>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:700;margin-bottom:.75rem">إنشاء غرفة جديدة</p>
+      <p style="font-size:13px;color:#6b6b66;margin-bottom:.75rem">ستحصل على كود تشاركه مع صاحبك</p>
+      <button class="btn bp" id="createBtn">إنشاء غرفة ▶</button>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:700;margin-bottom:.75rem">الانضمام لغرفة</p>
+      <div class="irow">
+        <input id="codeInp" class="ifield" placeholder="أدخل الكود" maxlength="4" style="text-align:center;font-size:20px;font-weight:700;letter-spacing:4px"/>
+        <button class="btn bp" id="joinBtn" style="width:auto;padding:.6rem 1.1rem">انضم</button>
+      </div>
+    </div>
+  </div>`;}
+
+function waitingH(){
+  return`<div class="scr">
+    <div class="hdr"><h1>🎯 خمّن ما عندي</h1></div>
+    <div class="code-box">
+      <p class="code-hint">شارك هذا الكود مع صاحبك</p>
+      <div class="code-num">${G.roomCode}</div>
+      <p class="code-hint">في انتظار الانضمام...</p>
+    </div>
+    <div class="waiting"><div class="spin"></div>ينتظر ${esc(G.myName)} انضمام اللاعب الثاني...</div>
+    <button class="btn" id="copyBtn">نسخ الكود 📋</button>
+  </div>`;}
+
+function itemsH(){
+  const it=G.myItem;
+  if(!it) return`<div class="scr"><div class="waiting"><div class="spin"></div>جاري التحضير...</div></div>`;
+  return`<div class="scr">
+    ${sbH()}
+    <div class="hdr"><h1>🔒 عنصرك السري</h1><p>هذا لك وحدك — لا تُخبر أحداً!</p></div>
+    <div class="card" style="text-align:center">
+      <div class="itembx">
+        <div class="iem">${it.e}</div>
+        <div class="inm">${esc(it.n)}</div>
+        <div class="iht">الحالة: <strong>${esc(it.s)}</strong></div>
+      </div>
+      <div style="background:#FAEEDA;border-radius:10px;padding:.75rem;margin-top:.875rem;font-size:13px;color:#633806">⚠️ احفظ عنصرك — لن يظهر مجدداً أثناء اللعب</div>
+      <button class="btn bp" id="readyBtn" style="margin-top:.875rem;padding:.75rem">جاهز للعب ✓</button>
+    </div>
+  </div>`;}
+
+function gameH(){
+  const myTurn=G.asker===G.myRole;
+  const waitingAns=G.pendingQ&&G.pendingQ!=='';
+  const iAnswerNow=waitingAns&&!myTurn; /* I need to answer opponent's question */
+  const pct=Math.round(G.qCount/G.MAX*100);
+
+  const mhtml=G.msgs.map(m=>{
+    if(m.t==='q'){
+      const isMine=(G.myRole===1&&m.p===1)||(G.myRole===2&&m.p===2);
+      const cl=isMine?'mq-me':'mq-op';
+      const who=isMine?'أنا أسأل':esc(G.opName)+' يسأل';
+      return`<div class="${cl}"><span style="font-size:11px;opacity:.75;display:block;margin-bottom:2px">${who}:</span>${esc(m.v)}</div>`;
+    }
+    if(m.t==='a') return`<div class="ma"><strong>الجواب:</strong> ${esc(m.v)}</div>`;
+    return`<div class="ms">${esc(m.v)}</div>`;
+  }).join('');
+
+  let inp='';
+  if(G.qCount>=G.MAX){
+    inp=`<div class="waiting"><div class="spin"></div>انتهت الأسئلة — جاري الانتقال للتخمين...</div>`;
+  } else if(iAnswerNow){
+    inp=`<div class="tind tip2"><div class="dot dot2"></div>دورك للإجابة على سؤال ${esc(G.opName)}</div>
+    <div class="card" style="background:#f5f4f0;padding:.75rem">
+      <p style="font-size:14px;margin-bottom:.5rem;font-weight:500">السؤال: ${esc(G.pendingQ)}</p>
+    </div>
+    <div class="abtns">${['نعم ✓','لا ✗','أحياناً','ربما','لا أعلم'].map(a=>`<button class="abtn" data-a="${a}">${a}</button>`).join('')}</div>
+    <div class="irow"><input id="ai" class="ifield" placeholder="أو اكتب جوابك..."/><button class="btn bg" id="sa" style="width:auto;padding:.6rem 1rem">إرسال</button></div>`;
+  } else if(waitingAns&&myTurn){
+    inp=`<div class="waiting"><div class="spin"></div>في انتظار إجابة ${esc(G.opName)}...</div>`;
+  } else if(myTurn){
+    inp=`<div class="tind tip1"><div class="dot"></div>دورك تسأل — سؤال ${G.qCount+1} من ${G.MAX}</div>
+    <div class="irow"><input id="qi" class="ifield" placeholder="مثال: هل هو صلب؟ هل يُستخدم يومياً؟"/><button class="btn bp" id="sq" style="width:auto;padding:.6rem 1rem">إرسال</button></div>`;
+  } else {
+    inp=`<div class="waiting"><div class="spin"></div>في انتظار سؤال ${esc(G.opName)}...</div>`;
+  }
+
+  return`<div class="scr">
+    ${sbH()}
+    <div class="hdr"><h1>❓ الأسئلة</h1><p>${G.qCount} من ${G.MAX}</p></div>
+    <div class="prg"><div class="prf" style="width:${pct}%"></div></div>
+    <div class="card qbox" id="mb" style="min-height:100px">${mhtml||'<div class="ms">انتظر — جاري البدء...</div>'}</div>
+    ${inp}
+  </div>`;}
+
+function guessingH(){
+  const myG=G.myGuess;
+  if(myG){
+    if(G.opGuessed){
+      /* both guessed, waiting for roundEnd calculation */
+      return`<div class="scr">${sbH()}<div class="waiting"><div class="spin"></div>كلاكما خمّن — جاري حساب النتائج...</div></div>`;
+    }
+    return`<div class="scr">${sbH()}<div class="card" style="text-align:center;padding:1.25rem">
+      <p style="font-size:15px;font-weight:500;margin-bottom:.5rem">اخترت: ${myG.e} ${esc(myG.n)}</p>
+      <div class="waiting"><div class="spin"></div>في انتظار تخمين ${esc(G.opName)}...</div>
+    </div></div>`;
+  }
+  return`<div class="scr">
+    ${sbH()}
+    <div class="hdr"><h1>🎯 وقت التخمين</h1><p>خمّن ما عند ${esc(G.opName)}</p></div>
+    <p style="font-size:13px;color:#6b6b66;text-align:center">اختر العنصر الصحيح من الخيارات الخمسة</p>
+    <div class="cgrid">${G.myChoices.map((c,i)=>`<button class="cbtn" data-i="${i}"><span class="cem">${c.e}</span><span class="cnm">${esc(c.n)}</span></button>`).join('')}
+    </div>
+  </div>`;}
+
+function roundEndH(){
+  const myOk=G.myGuess&&G.opItem&&G.myGuess.n===G.opItem.n;
+  const opOk=G.opGuess&&G.myItem&&G.opGuess.n===G.myItem.n;
+  let msg='';
+  if(myOk&&opOk) msg='تعادل! كلاكما خمّن صحيح 🤝';
+  else if(myOk) msg='أنت تفوز بالجولة 🎉';
+  else if(opOk) msg=esc(G.opName)+' يفوز بالجولة 🎉';
+  else msg='لم يخمن أحد صحيحاً 😅';
+  const lead=G.myScore>G.opScore?'أنت تتصدر 🏆':G.opScore>G.myScore?esc(G.opName)+' يتصدر 🏆':'تعادل في المجموع';
+
+  return`<div class="scr">
+    <div class="sb">
+      <div class="sb-p me"><div class="sb-name">${esc(G.myName)}</div><div class="sb-score">${G.myScore}</div></div>
+      <div class="sb-mid"><div>VS</div><div class="sb-label" style="color:#1D9E75">${lead}</div></div>
+      <div class="sb-p op"><div class="sb-name">${esc(G.opName)}</div><div class="sb-score">${G.opScore}</div></div>
+    </div>
+    <div class="card">
+      <p style="font-size:16px;font-weight:700;text-align:center;margin-bottom:.875rem">${msg}</p>
+      <div class="rgrid">
+        <div class="rcrd" style="border:${myOk?'2px solid #1D9E75':''}">
+          <span class="tag tag-me">أنا</span>
+          <p style="font-size:26px;margin:.4rem 0">${myOk?'✅':'❌'}</p>
+          <p style="font-size:12px;color:#6b6b66">خمّنت: ${G.myGuess?G.myGuess.e+' '+esc(G.myGuess.n):'—'}</p>
+          <p style="font-size:12px;color:#6b6b66">الصح: ${G.opItem?G.opItem.e+' '+esc(G.opItem.n):'—'}</p>
+          <span class="pt-badge ${myOk?'pt-ok':'pt-no'}">${myOk?'+1 نقطة':'0'}</span>
+        </div>
+        <div class="rcrd" style="border:${opOk?'2px solid #1D9E75':''}">
+          <span class="tag tag-op">${esc(G.opName)}</span>
+          <p style="font-size:26px;margin:.4rem 0">${opOk?'✅':'❌'}</p>
+          <p style="font-size:12px;color:#6b6b66">خمّن: ${G.opGuess?G.opGuess.e+' '+esc(G.opGuess.n):'—'}</p>
+          <p style="font-size:12px;color:#6b6b66">الصح: ${G.myItem?G.myItem.e+' '+esc(G.myItem.n):'—'}</p>
+          <span class="pt-badge ${opOk?'pt-ok':'pt-no'}">${opOk?'+1 نقطة':'0'}</span>
+        </div>
+      </div>
+    </div>
+    ${G.saving?`<div class="waiting"><div class="spin"></div>جاري حفظ النقاط...</div>`:''}
+    ${G.myRole===1?`<button class="btn bp" id="newRoundBtn" style="padding:.75rem">جولة جديدة ▶</button>`:`<div class="waiting"><div class="spin"></div>في انتظار اللاعب الأول لبدء جولة جديدة...</div>`}
+    <button class="btn" id="leaveBtn">مغادرة اللعبة</button>
+  </div>`;}
+
+/* ══════════════ BIND ══════════════ */
+function bind(){
+  const $=id=>document.getElementById(id);
+  const scrollM=()=>{const b=$('mb');if(b)setTimeout(()=>b.scrollTop=b.scrollHeight,80);};
+
+  if(G.ph==='lobby'){
+    const getMyName=()=>{const el=$('nameInp');return el?el.value.trim():'';};
+    $('createBtn')&&$('createBtn').addEventListener('click',async()=>{
+      const name=getMyName();
+      if(!name){alert('أدخل اسمك أولاً');return;}
+      G.myName=name;
+      $('createBtn').disabled=true;$('createBtn').textContent='جاري الإنشاء...';
+      await createRoom();
+      G.ph='waiting';render();startPoll();
+    });
+    $('joinBtn')&&$('joinBtn').addEventListener('click',async()=>{
+      const name=getMyName();
+      if(!name){alert('أدخل اسمك أولاً');return;}
+      const code=$('codeInp')?.value.trim();
+      if(!code||code.length!==4){alert('أدخل كوداً مكوناً من 4 أرقام');return;}
+      G.myName=name;
+      $('joinBtn').disabled=true;$('joinBtn').textContent='...';
+      const row=await joinRoom(code);
+      if(!row){alert('الكود غير صحيح أو الغرفة ممتلئة');$('joinBtn').disabled=false;$('joinBtn').textContent='انضم';return;}
+      applyRoom(row);
+      G.ph='items';render();startPoll();
+    });
+    $('codeInp')&&$('codeInp').addEventListener('keydown',e=>{if(e.key==='Enter')$('joinBtn')?.click();});
+  }
+
+  if(G.ph==='waiting'){
+    $('copyBtn')&&$('copyBtn').addEventListener('click',()=>{
+      navigator.clipboard?.writeText(G.roomCode).then(()=>{$('copyBtn').textContent='تم النسخ ✓';setTimeout(()=>{if($('copyBtn'))$('copyBtn').textContent='نسخ الكود 📋';},2000);});
+    });
+  }
+
+  if(G.ph==='items'){
+    $('readyBtn')&&$('readyBtn').addEventListener('click',async()=>{
+      $('readyBtn').disabled=true;$('readyBtn').textContent='جاري...';
+      /* both players click ready; p1 moves status to 'game' when ready */
+      if(G.myRole===1){
+        await dbPatch('game_rooms','code=eq.'+G.roomCode,{status:'game',updated_at:new Date().toISOString()});
+      } else {
+        /* p2 just waits for status to become 'game' — poll handles it */
+        $('readyBtn').textContent='في انتظار اللاعب الأول...';
+      }
+    });
+  }
+
+  if(G.ph==='game'){
+    /* send question */
+    const doQ=async()=>{
+      const el=$('qi');if(!el)return;
+      const v=el.value.trim();if(!v)return;
+      el.value='';
+      const newMsgs=[...G.msgs,{t:'q',p:G.myRole,v}];
+      G.msgs=newMsgs;G.pendingQ=v;
+      render();scrollM();
+      await dbPatch('game_rooms','code=eq.'+G.roomCode,{
+        msgs:JSON.stringify(newMsgs),
+        pending_q:v,
+        updated_at:new Date().toISOString()
+      });
+    };
+    $('qi')&&$('qi').addEventListener('keydown',e=>{if(e.key==='Enter')doQ();});
+    $('sq')&&$('sq').addEventListener('click',doQ);
+
+    /* send answer */
+    const doA=async(v)=>{
+      if(!v)return;
+      const newCount=G.qCount+1;
+      const newAsker=G.myRole===1?2:1; /* flip asker after answer */
+      const newMsgs=[...G.msgs,{t:'a',v}];
+      let extraMsg=null;
+      if(newCount>=G.MAX){extraMsg={t:'sys',v:'انتهت الأسئلة! حان وقت التخمين'};}
+      else{extraMsg={t:'sys',v:'الدور لـ '+(newAsker===G.myRole?'أنت':'صاحبك')};}
+      const finalMsgs=[...newMsgs,extraMsg];
+      G.msgs=finalMsgs;G.qCount=newCount;G.asker=newAsker;G.pendingQ=null;
+      render();scrollM();
+      const patch={msgs:JSON.stringify(finalMsgs),q_count:newCount,asker:newAsker,pending_q:'',updated_at:new Date().toISOString()};
+      if(newCount>=G.MAX) patch.status='guessing';
+      await dbPatch('game_rooms','code=eq.'+G.roomCode,patch);
+      if(newCount>=G.MAX){buildMyChoices();G.ph='guessing';render();}
+    };
+    $('ai')&&$('ai').addEventListener('keydown',e=>{if(e.key==='Enter'){const el=$('ai');doA(el.value.trim());}});
+    $('sa')&&$('sa').addEventListener('click',()=>{const el=$('ai');if(el)doA(el.value.trim());});
+    document.querySelectorAll('.abtn').forEach(b=>b.addEventListener('click',()=>doA(b.dataset.a)));
+  }
+
+  if(G.ph==='guessing'&&!G.myGuess){
+    document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',async()=>{
+      const p=G.myChoices[parseInt(b.dataset.i)];
+      G.myGuess=p;
+      render();
+      /* save my guess */
+      const field=G.myRole===1?'p1_guess':'p2_guess';
+      const patch={[field]:JSON.stringify(p),updated_at:new Date().toISOString()};
+      /* check if op already guessed */
+      const row=await fetchRoom();
+      const opField=G.myRole===1?'p2_guess':'p1_guess';
+      const opG=row?.[opField]?JSON.parse(row[opField]):null;
+      if(opG){
+        /* both guessed — compute scores and set roundEnd */
+        const myOk=p.n===G.opItem?.n;
+        const opOk=opG.n===G.myItem?.n;
+        const newS1=(row.score1||0)+(G.myRole===1&&myOk?1:G.myRole===2&&opOk?1:0);
+        const newS2=(row.score2||0)+(G.myRole===2&&myOk?1:G.myRole===1&&opOk?1:0);
+        patch.score1=newS1;patch.score2=newS2;
+        patch.round=(row.round||0)+1;
+        patch.status='roundEnd';
+        G.opGuess=opG;
+        G.myScore=G.myRole===1?newS1:newS2;
+        G.opScore=G.myRole===1?newS2:newS1;
+      }
+      await dbPatch('game_rooms','code=eq.'+G.roomCode,patch);
+      if(patch.status==='roundEnd'){G.ph='roundEnd';render();}
+      else{G.opGuessed=false;render();}
+    }));
+  }
+
+  if(G.ph==='roundEnd'){
+    $('newRoundBtn')&&$('newRoundBtn').addEventListener('click',async()=>{
+      $('newRoundBtn').disabled=true;$('newRoundBtn').textContent='جاري التحضير...';
+      const i1=pick(null);const i2=pick(i1);
+      await dbPatch('game_rooms','code=eq.'+G.roomCode,{
+        p1_item:JSON.stringify(i1),p2_item:JSON.stringify(i2),
+        p1_guess:'',p2_guess:'',
+        msgs:JSON.stringify([]),q_count:0,asker:1,pending_q:'',
+        status:'game',
+        updated_at:new Date().toISOString()
+      });
+      G.myItem=G.myRole===1?i1:i2;
+      G.myGuess=null;G.opGuess=null;G.opGuessed=false;
+      G.msgs=[];G.qCount=0;G.asker=1;G.pendingQ=null;
+      G.ph='items';render();
+    });
+    $('leaveBtn')&&$('leaveBtn').addEventListener('click',()=>{
+      stopPoll();
+      G={ph:'lobby',myName:G.myName,opName:'',myRole:0,roomCode:'',myItem:null,opItem:null,myScore:0,opScore:0,round:0,msgs:[],qCount:0,MAX:10,asker:1,pendingQ:null,myChoices:[],myGuess:null,opGuess:null,opGuessed:false,channel:null,pollTimer:null,saving:false};
+      render();
+    });
+  }
+}
+
+render();
+</script>
+</body>
+</html>
