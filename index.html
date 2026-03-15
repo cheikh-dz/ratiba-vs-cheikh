@@ -290,25 +290,36 @@ function renderMsgs(){
 }
 
 function renderInputArea(){
-  const myTurn=G.asker===G.myRole;
-  const waitingAns=!!G.pendingQ;
-  const iAnswer=waitingAns&&!myTurn;
+  /*
+    منطق الأدوار:
+    asker = من دوره يسأل (يُحدَّث بعد كل إجابة ليصير المجيب)
+    pending_q = السؤال المنتظَر إجابته (فارغ إذا لا يوجد سؤال معلق)
+
+    الحالات الأربع:
+    A) pending فارغ  + asker=أنا  → اكتب سؤالك
+    B) pending ممتلئ + asker=أنا  → سألت، انتظر الجواب
+    C) pending ممتلئ + asker≠أنا  → أجب على سؤاله
+    D) pending فارغ  + asker≠أنا  → انتظر سؤاله
+  */
+  const iAmAsker=G.asker===G.myRole;
+  const hasPending=!!(G.pendingQ&&G.pendingQ!=='');
 
   if(G.qCount>=G.MAX){
     return`<div class="waiting"><div class="spin"></div>انتهت الأسئلة — جاري الانتقال للتخمين...</div>`;
   }
-  if(iAnswer){
+  if(!hasPending&&iAmAsker){
+    return`<div class="tind tip1"><div class="dot"></div>دورك تسأل — سؤال ${G.qCount+1} من ${G.MAX}</div>
+    <div class="irow"><input id="qi" class="ifield" placeholder="مثال: هل هو صلب؟ هل يُستخدم يومياً؟"/><button class="btn bp" id="sq" style="width:auto;padding:.6rem 1rem">إرسال</button></div>`;
+  }
+  if(hasPending&&iAmAsker){
+    return`<div class="tind tip1"><div class="dot"></div>سؤالك أُرسل: ${esc(G.pendingQ)}</div>
+    <div class="waiting"><div class="spin"></div>في انتظار إجابة ${esc(G.opName)}...</div>`;
+  }
+  if(hasPending&&!iAmAsker){
     return`<div class="tind tip2"><div class="dot dot2"></div>دورك للإجابة على سؤال ${esc(G.opName)}</div>
     <div class="card" style="background:#f5f4f0;padding:.75rem"><p style="font-size:14px;font-weight:500">السؤال: ${esc(G.pendingQ)}</p></div>
     <div class="abtns">${['نعم ✓','لا ✗','أحياناً','ربما','لا أعلم'].map(a=>`<button class="abtn" data-a="${a}">${a}</button>`).join('')}</div>
     <div class="irow"><input id="ai" class="ifield" placeholder="أو اكتب جوابك..."/><button class="btn bg" id="sa" style="width:auto;padding:.6rem 1rem">إرسال</button></div>`;
-  }
-  if(waitingAns&&myTurn){
-    return`<div class="waiting"><div class="spin"></div>في انتظار إجابة ${esc(G.opName)}...</div>`;
-  }
-  if(myTurn){
-    return`<div class="tind tip1"><div class="dot"></div>دورك تسأل — سؤال ${G.qCount+1} من ${G.MAX}</div>
-    <div class="irow"><input id="qi" class="ifield" placeholder="مثال: هل هو صلب؟ هل يُستخدم يومياً؟"/><button class="btn bp" id="sq" style="width:auto;padding:.6rem 1rem">إرسال</button></div>`;
   }
   return`<div class="waiting"><div class="spin"></div>في انتظار سؤال ${esc(G.opName)}...</div>`;
 }
@@ -443,9 +454,14 @@ function bindInputArea(){
   const doA=async(v)=>{
     if(!v)return;
     const nq=G.qCount+1;
-    const na=G.myRole===1?2:1;
+    /* من أجاب هو السائل التالي — G.myRole هو المجيب الآن */
+    const na=G.myRole;
     const nm=[...G.msgs,{t:'a',v}];
-    const sys=nq>=G.MAX?{t:'sys',v:'انتهت الأسئلة! حان وقت التخمين'}:{t:'sys',v:'الدور الآن لـ '+(na===G.myRole?'أنت':'صاحبك')};
+    /* من أجاب (G.myName) هو السائل التالي */
+    const nextAskerName=G.myName;
+    const sys=nq>=G.MAX
+      ?{t:'sys',v:'انتهت الأسئلة! حان وقت التخمين'}
+      :{t:'sys',v:`${esc(nextAskerName)} يسأل الآن`};
     const fm=[...nm,sys];
     G.msgs=fm; G.qCount=nq; G.asker=na; G.pendingQ=null;
     G._lastMsgLen=fm.length; G._lastQ=nq; G._lastAsker=na;
